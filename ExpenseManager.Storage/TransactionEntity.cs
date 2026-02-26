@@ -13,6 +13,14 @@ namespace ExpenseManager.Storage
         public string Description { get; set; }
         public DateTime Date { get; set; }
 
-
+        public TransactionEntity(int id, int walletId, decimal amount, TransactionCategory category, string description, DateTime date)
+        {
+            Id = id;
+            WalletId = walletId;
+            Amount = amount;
+            Category = category;
+            Description = description;
+            Date = date;
+        }
     }
 }
