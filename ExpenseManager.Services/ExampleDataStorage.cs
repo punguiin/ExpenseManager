@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ExpenseManager.Services
 {
-    internal class ExampleDataStorage
+    internal static class ExampleDataStorage
     {
         public static List<WalletEntity> Wallets = new List<WalletEntity> {
             new WalletEntity(1, "Готівка", Currency.UAH),
