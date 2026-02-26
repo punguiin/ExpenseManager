@@ -11,7 +11,7 @@ namespace ExpenseManager.Storage
         public decimal Amount { get; set; }
         public TransactionCategory Category { get; set; }
         public string Description { get; set; }
-        public DateTime DateTime { get; set; }
+        public DateTime Date { get; set; }
 
 
     }
