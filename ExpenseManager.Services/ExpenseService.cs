@@ -19,7 +19,8 @@ namespace ExpenseManager.Services
         public WalletModel? GetWalletById(int walletId)
         {
             var entity = ExampleDataStorage.Wallets.FirstOrDefault(w => w.Id == walletId);
-            if (entity == null) {
+            if (entity == null)
+            {
                 return null;
             }
 
@@ -29,7 +30,7 @@ namespace ExpenseManager.Services
         }
 
         public List<TransactionModel> GetTransactionsByWalletId(int walletId)
-        { 
+        {
             return ExampleDataStorage.Transactions
                 .Where(t => t.WalletId == walletId)
                 .Select(t => new TransactionModel(t.Id, t.WalletId, t.Amount, t.Category, t.Description, t.Date))

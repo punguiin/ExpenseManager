@@ -7,15 +7,15 @@ namespace ExpenseManager.Services
 {
     internal static class ExampleDataStorage
     {
-        public static List<WalletEntity> Wallets = new List<WalletEntity> {
+        public static List<WalletEntity> Wallets { get; } = new List<WalletEntity> {
             new WalletEntity(1, "Готівка", Currency.UAH),
-            new WalletEntity(2, "Картка", Currency.UAH),
+            new WalletEntity(2, "Картка", Currency.EUR),
             new WalletEntity(3, "USD рахунок", Currency.USD)
         };
 
-        public static List<TransactionEntity> Transactions = new List<TransactionEntity>
+        public static List<TransactionEntity> Transactions { get; } = new List<TransactionEntity>
         {
-            //fist wallet transactions
+            // First wallet transactions
             new TransactionEntity(1, 1, 5000.00m, TransactionCategory.Salary, "Зарплата за січень", new DateTime(2026, 1, 15)),
             new TransactionEntity(2, 1, -250.50m, TransactionCategory.Groceries, "Продукти в АТБ", new DateTime(2026, 1, 16)),
             new TransactionEntity(3, 1, -120.00m, TransactionCategory.Cafe, "Обід в ресторані", new DateTime(2026, 1, 17)),
@@ -27,7 +27,7 @@ namespace ExpenseManager.Services
             new TransactionEntity(9, 1, -180.00m, TransactionCategory.Groceries, "Продукти в Сільпо", new DateTime(2026, 1, 25)),
             new TransactionEntity(10, 1, 5000.00m, TransactionCategory.Salary, "Зарплата за лютий", new DateTime(2026, 2, 15)),
 
-            //second wallet transactions
+            // Second wallet transactions
             new TransactionEntity(11, 2, 12000.00m,TransactionCategory.Salary, "Зарплата на картку", new DateTime(2026, 1, 15)),
             new TransactionEntity(12, 2, -3200.00m,TransactionCategory.Auto, "Заправка авто", new DateTime(2026, 1, 19))
         };
