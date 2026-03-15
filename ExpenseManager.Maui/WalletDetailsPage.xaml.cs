@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ExpenseManager.Services;
 using ExpenseManager.Models;
+using ExpenseManager.Storage;
 
 namespace ExpenseManager.Maui
 {
-    public partial class WalletDetailsPage: ContentPage
+    public partial class WalletDetailsPage : ContentPage
     {
         private readonly IExpenseService _expenseService;
-        private WalletModel _wallet;
+        private readonly WalletModel _wallet;
 
         public WalletDetailsPage(IExpenseService expenseService, int walletId)
         {
@@ -19,19 +17,19 @@ namespace ExpenseManager.Maui
 
             NameLabel.Text = _wallet.Name;
             CurrencyLabel.Text = $"Валюта: {_wallet.Currency}";
-            BalanceLabel.Text = $"Баланс: {_wallet.TotalBalance} {_wallet.Currency}";
+            BalanceLabel.Text = $"{_wallet.TotalBalance:N2} {_wallet.Currency}";
 
-            TransactionsListView.ItemsSource = _wallet.Transactions;
+            TransactionsCollectionView.ItemsSource = _wallet.Transactions;
         }
 
-        private async void OnTransactionSelected(object sender, SelectedItemChangedEventArgs e)
+        private async void OnTransactionSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (e.SelectedItem == null) return;
+            if (e.CurrentSelection.Count == 0) return;
 
-            var transaction = (TransactionModel)e.SelectedItem;
+            var transaction = (TransactionModel)e.CurrentSelection[0];
             await Navigation.PushAsync(new TransactionDetailsPage(transaction, _wallet.Currency));
 
-            TransactionsListView.SelectedItem = null;
+            TransactionsCollectionView.SelectedItem = null;
         }
     }
 }

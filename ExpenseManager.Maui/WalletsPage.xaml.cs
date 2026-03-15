@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ExpenseManager.Services;
 using ExpenseManager.Models;
 
 namespace ExpenseManager.Maui
 {
-    public partial class WalletsPage: ContentPage
+    public partial class WalletsPage : ContentPage
     {
         private readonly IExpenseService _expenseService;
 
@@ -19,17 +16,20 @@ namespace ExpenseManager.Maui
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            WalletsListView.ItemsSource = _expenseService.GetAllWallets();
+            var wallets = _expenseService.GetAllWallets();
+            WalletsCollectionView.ItemsSource = wallets;
+            WalletCountLabel.Text = $"{wallets.Count} гаманців";
+            WalletsCollectionView.SelectedItem = null;
         }
 
-        private async void OnWalletSelected(object sender, SelectedItemChangedEventArgs e)
+        private async void OnWalletSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (e.SelectedItem == null) return;
+            if (e.CurrentSelection.Count == 0) return;
 
-            var wallet = (WalletModel)e.SelectedItem;
+            var wallet = (WalletModel)e.CurrentSelection[0];
             await Navigation.PushAsync(new WalletDetailsPage(_expenseService, wallet.Id));
 
-            WalletsListView.SelectedItem = null ;
+            WalletsCollectionView.SelectedItem = null;
         }
     }
 }

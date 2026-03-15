@@ -1,22 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ExpenseManager.Models;
 using ExpenseManager.Storage;
 
 namespace ExpenseManager.Maui
 {
-    public partial class TransactionDetailsPage: ContentPage
+    public partial class TransactionDetailsPage : ContentPage
     {
         public TransactionDetailsPage(TransactionModel transaction, Currency currency)
         {
             InitializeComponent();
 
-            AmountLabel.Text = $"Сума: {transaction.Amount:+#;-#;0} {currency}";
-            CategoryLabel.Text = $"Категорія: {transaction.Category}";
-            DescriptionLabel.Text = $"Опис: {transaction.Description}";
-            DateLabel.Text = $"Дата: {transaction.Date:dd.MM.yyyy}";
-            TypeLabel.Text = $"Тип: {(transaction.IsExpense ? "Витрата" : "Дохід")}";
+            string sign = transaction.IsExpense ? "-" : "+";
+            decimal absAmount = Math.Abs(transaction.Amount);
+
+            AmountLabel.Text = $"{sign}{absAmount:N2} {currency}";
+            CategoryLabel.Text = transaction.Category.ToString();
+            DescriptionLabel.Text = transaction.Description;
+            DateLabel.Text = transaction.Date.ToString("dd MMMM yyyy");
+            TypeLabel.Text = transaction.IsExpense ? "Витрата" : "Дохід";
+
+            if (transaction.IsExpense)
+            {
+                HeaderFrame.BackgroundColor = Color.FromArgb("#E53935");
+                TypeLabel.TextColor = Color.FromArgb("#FFCDD2");
+            }
+            else
+            {
+                HeaderFrame.BackgroundColor = Color.FromArgb("#43A047");
+                TypeLabel.TextColor = Color.FromArgb("#C8E6C9");
+            }
         }
     }
 }
