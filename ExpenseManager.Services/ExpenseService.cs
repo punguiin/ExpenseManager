@@ -7,7 +7,7 @@ using ExpenseManager.Services;
 
 namespace ExpenseManager.Services
 {
-    public class ExpenseService
+    public class ExpenseService: IExpenseService
     {
         public List<WalletModel> GetAllWallets()
         {
