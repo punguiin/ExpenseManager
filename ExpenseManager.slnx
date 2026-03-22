@@ -1,7 +1,5 @@
 <Solution>
-  <Project Path="ExpenseManager.Console/ExpenseManager.csproj" />
   <Project Path="ExpenseManager.Storage/ExpenseManager.Storage.csproj" />
   <Project Path="ExpenseManager.Maui/ExpenseManager.Maui.csproj" />
-  <Project Path="ExpenseManager.Models/ExpenseManager.Models.csproj" />
   <Project Path="ExpenseManager.Services/ExpenseManager.Services.csproj" />
 </Solution>

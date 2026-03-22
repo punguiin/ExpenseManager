@@ -1,9 +1,8 @@
-﻿using ExpenseManager.Storage;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ExpenseManager.Services
+namespace ExpenseManager.Storage
 {
     internal static class ExampleDataStorage
     {
