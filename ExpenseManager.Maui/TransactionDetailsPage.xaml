@@ -8,36 +8,41 @@
     <ScrollView>
         <StackLayout Spacing="0">
             <!-- Amount header -->
-            <Frame x:Name="HeaderFrame"
-                   CornerRadius="0"
-                   Padding="24,32"
-                   HasShadow="True"
-                   BorderColor="Transparent">
+            <Border BackgroundColor="{Binding HeaderColor}"
+                    StrokeShape="RoundRectangle 0"
+                    Padding="24,32"
+                    Stroke="Transparent">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Radius="4" Opacity="0.15" />
+                </Border.Shadow>
                 <StackLayout Spacing="4" HorizontalOptions="Center">
-                    <Label x:Name="TypeLabel"
+                    <Label Text="{Binding TypeText}"
+                           TextColor="{Binding TypeLabelColor}"
                            FontSize="14"
                            HorizontalOptions="Center" />
-                    <Label x:Name="AmountLabel"
+                    <Label Text="{Binding AmountText}"
                            FontSize="38"
                            FontAttributes="Bold"
                            TextColor="White"
                            HorizontalOptions="Center" />
                 </StackLayout>
-            </Frame>
+            </Border>
 
             <!-- Details card -->
-            <Frame BackgroundColor="White"
-                   CornerRadius="16"
-                   Padding="20"
-                   Margin="16,20,16,16"
-                   HasShadow="True"
-                   BorderColor="Transparent">
+            <Border BackgroundColor="White"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="20"
+                    Margin="16,20,16,16"
+                    Stroke="Transparent">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Radius="4" Opacity="0.15" />
+                </Border.Shadow>
                 <StackLayout Spacing="0">
                     <!-- Category -->
                     <Label Text="Категорія"
                            FontSize="12"
                            TextColor="{StaticResource Gray400}" />
-                    <Label x:Name="CategoryLabel"
+                    <Label Text="{Binding CategoryText}"
                            FontSize="17"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Gray900}"
@@ -50,7 +55,7 @@
                            FontSize="12"
                            TextColor="{StaticResource Gray400}"
                            Margin="0,16,0,0" />
-                    <Label x:Name="DescriptionLabel"
+                    <Label Text="{Binding DescriptionText}"
                            FontSize="17"
                            TextColor="{StaticResource Gray900}"
                            Margin="0,2,0,16" />
@@ -62,12 +67,12 @@
                            FontSize="12"
                            TextColor="{StaticResource Gray400}"
                            Margin="0,16,0,0" />
-                    <Label x:Name="DateLabel"
+                    <Label Text="{Binding DateText}"
                            FontSize="17"
                            TextColor="{StaticResource Gray900}"
                            Margin="0,2,0,0" />
                 </StackLayout>
-            </Frame>
+            </Border>
         </StackLayout>
     </ScrollView>
 

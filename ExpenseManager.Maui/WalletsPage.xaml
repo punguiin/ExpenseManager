@@ -5,9 +5,9 @@
              Title="Гаманці"
              BackgroundColor="{StaticResource Gray100}">
 
-    <CollectionView x:Name="WalletsCollectionView"
+    <CollectionView ItemsSource="{Binding Wallets}"
+                    SelectedItem="{Binding SelectedWallet}"
                     SelectionMode="Single"
-                    SelectionChanged="OnWalletSelected"
                     Margin="12,8">
         <CollectionView.Header>
             <StackLayout Padding="4,12,4,4">
@@ -15,7 +15,7 @@
                        FontSize="28"
                        FontAttributes="Bold"
                        TextColor="{StaticResource Gray900}" />
-                <Label x:Name="WalletCountLabel"
+                <Label Text="{Binding WalletCountText}"
                        FontSize="14"
                        TextColor="{StaticResource Gray500}"
                        Margin="0,2,0,8" />
@@ -23,29 +23,31 @@
         </CollectionView.Header>
         <CollectionView.ItemTemplate>
             <DataTemplate>
-                <Frame BackgroundColor="White"
-                       CornerRadius="12"
-                       Padding="16"
-                       Margin="4,6"
-                       HasShadow="True"
-                       BorderColor="Transparent">
+                <Border BackgroundColor="White"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="16"
+                        Margin="4,6"
+                        Stroke="Transparent">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,2" Radius="4" Opacity="0.15" />
+                    </Border.Shadow>
                     <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
                         <!-- Currency icon -->
-                        <Frame Grid.RowSpan="2"
-                               BackgroundColor="{StaticResource Secondary}"
-                               CornerRadius="24"
-                               WidthRequest="48"
-                               HeightRequest="48"
-                               Padding="0"
-                               HasShadow="False"
-                               VerticalOptions="Center">
+                        <Border Grid.RowSpan="2"
+                                BackgroundColor="{StaticResource Secondary}"
+                                StrokeShape="RoundRectangle 24"
+                                WidthRequest="48"
+                                HeightRequest="48"
+                                Padding="0"
+                                Stroke="Transparent"
+                                VerticalOptions="Center">
                             <Label Text="{Binding Currency}"
                                    FontSize="14"
                                    FontAttributes="Bold"
                                    TextColor="{StaticResource Tertiary}"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center" />
-                        </Frame>
+                        </Border>
 
                         <!-- Name -->
                         <Label Grid.Column="1"
@@ -59,7 +61,7 @@
                         <!-- Transaction count -->
                         <Label Grid.Column="1"
                                Grid.Row="1"
-                               Text="{Binding Transactions.Count, StringFormat='{0} транзакцій'}"
+                               Text="{Binding TransactionCount, StringFormat='{0} транзакцій'}"
                                FontSize="13"
                                TextColor="{StaticResource Gray400}"
                                Margin="12,2,0,0"
@@ -75,7 +77,7 @@
                                VerticalOptions="Center"
                                HorizontalOptions="End" />
                     </Grid>
-                </Frame>
+                </Border>
             </DataTemplate>
         </CollectionView.ItemTemplate>
         <CollectionView.EmptyView>
