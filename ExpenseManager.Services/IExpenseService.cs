@@ -1,14 +1,11 @@
-﻿using ExpenseManager.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ExpenseManager.Services.Dto;
 
 namespace ExpenseManager.Services
 {
     public interface IExpenseService
     {
-        List<WalletModel> GetAllWallets();
-        WalletModel? GetWalletById(int walletId);
-        List<TransactionModel> GetTransactionsByWalletId(int walletId);
+        List<WalletListDto> GetAllWallets();
+        WalletDetailDto? GetWalletById(int walletId);
+        TransactionDetailDto? GetTransactionById(int transactionId);
     }
 }

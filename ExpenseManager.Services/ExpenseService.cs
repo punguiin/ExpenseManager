@@ -1,40 +1,78 @@
-﻿using ExpenseManager.Storage;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ExpenseManager.Models;
-using ExpenseManager.Services;
+using ExpenseManager.Services.Dto;
+using ExpenseManager.Storage;
 
 namespace ExpenseManager.Services
 {
-    public class ExpenseService: IExpenseService
+    public class ExpenseService : IExpenseService
     {
-        public List<WalletModel> GetAllWallets()
+        private readonly IExpenseRepository _repository;
+
+        public ExpenseService(IExpenseRepository repository)
         {
-            return ExampleDataStorage.Wallets
-                .Select(w => new WalletModel(w.Id, w.Name, w.Currency))
-                .ToList();
+            _repository = repository;
         }
 
-        public WalletModel? GetWalletById(int walletId)
+        public List<WalletListDto> GetAllWallets()
         {
-            var entity = ExampleDataStorage.Wallets.FirstOrDefault(w => w.Id == walletId);
-            if (entity == null)
+            var wallets = _repository.GetAllWallets();
+
+            return wallets.Select(w =>
             {
-                return null;
-            }
-
-            var wallet = new WalletModel(entity.Id, entity.Name, entity.Currency);
-            wallet.Transactions = GetTransactionsByWalletId(walletId);
-            return wallet;
+                var transactions = _repository.GetTransactionsByWalletId(w.Id);
+                return new WalletListDto
+                {
+                    Id = w.Id,
+                    Name = w.Name,
+                    Currency = w.Currency,
+                    TransactionCount = transactions.Count,
+                    TotalBalance = transactions.Sum(t => t.Amount)
+                };
+            }).ToList();
         }
 
-        public List<TransactionModel> GetTransactionsByWalletId(int walletId)
+        public WalletDetailDto? GetWalletById(int walletId)
         {
-            return ExampleDataStorage.Transactions
-                .Where(t => t.WalletId == walletId)
-                .Select(t => new TransactionModel(t.Id, t.WalletId, t.Amount, t.Category, t.Description, t.Date))
-                .ToList();
+            var wallet = _repository.GetWalletById(walletId);
+            if (wallet == null)
+                return null;
+
+            var transactions = _repository.GetTransactionsByWalletId(walletId);
+
+            return new WalletDetailDto
+            {
+                Id = wallet.Id,
+                Name = wallet.Name,
+                Currency = wallet.Currency,
+                TotalBalance = transactions.Sum(t => t.Amount),
+                Transactions = transactions.Select(t => new TransactionListDto
+                {
+                    Id = t.Id,
+                    Category = t.Category,
+                    Description = t.Description,
+                    Date = t.Date,
+                    Amount = t.Amount
+                }).ToList()
+            };
+        }
+
+        public TransactionDetailDto? GetTransactionById(int transactionId)
+        {
+            var transaction = _repository.GetTransactionById(transactionId);
+            if (transaction == null)
+                return null;
+
+            var wallet = _repository.GetWalletById(transaction.WalletId);
+
+            return new TransactionDetailDto
+            {
+                Id = transaction.Id,
+                Amount = transaction.Amount,
+                Category = transaction.Category,
+                Description = transaction.Description,
+                Date = transaction.Date,
+                IsExpense = transaction.Amount < 0,
+                Currency = wallet?.Currency ?? Currency.UAH
+            };
         }
     }
 }
