@@ -5,6 +5,7 @@ namespace ExpenseManager.Services.Dto
     public class TransactionDetailDto
     {
         public int Id { get; set; }
+        public int WalletId { get; set; }
         public decimal Amount { get; set; }
         public TransactionCategory Category { get; set; }
         public string Description { get; set; } = string.Empty;

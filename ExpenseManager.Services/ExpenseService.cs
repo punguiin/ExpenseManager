@@ -12,31 +12,34 @@ namespace ExpenseManager.Services
             _repository = repository;
         }
 
-        public List<WalletListDto> GetAllWallets()
+        public async Task<List<WalletListDto>> GetAllWalletsAsync()
         {
-            var wallets = _repository.GetAllWallets();
+            var wallets = await _repository.GetAllWalletsAsync();
+            var result = new List<WalletListDto>(wallets.Count);
 
-            return wallets.Select(w =>
+            foreach (var wallet in wallets)
             {
-                var transactions = _repository.GetTransactionsByWalletId(w.Id);
-                return new WalletListDto
+                var transactions = await _repository.GetTransactionsByWalletIdAsync(wallet.Id);
+                result.Add(new WalletListDto
                 {
-                    Id = w.Id,
-                    Name = w.Name,
-                    Currency = w.Currency,
+                    Id = wallet.Id,
+                    Name = wallet.Name,
+                    Currency = wallet.Currency,
                     TransactionCount = transactions.Count,
                     TotalBalance = transactions.Sum(t => t.Amount)
-                };
-            }).ToList();
+                });
+            }
+
+            return result;
         }
 
-        public WalletDetailDto? GetWalletById(int walletId)
+        public async Task<WalletDetailDto?> GetWalletByIdAsync(int walletId)
         {
-            var wallet = _repository.GetWalletById(walletId);
+            var wallet = await _repository.GetWalletByIdAsync(walletId);
             if (wallet == null)
                 return null;
 
-            var transactions = _repository.GetTransactionsByWalletId(walletId);
+            var transactions = await _repository.GetTransactionsByWalletIdAsync(walletId);
 
             return new WalletDetailDto
             {
@@ -55,17 +58,18 @@ namespace ExpenseManager.Services
             };
         }
 
-        public TransactionDetailDto? GetTransactionById(int transactionId)
+        public async Task<TransactionDetailDto?> GetTransactionByIdAsync(int transactionId)
         {
-            var transaction = _repository.GetTransactionById(transactionId);
+            var transaction = await _repository.GetTransactionByIdAsync(transactionId);
             if (transaction == null)
                 return null;
 
-            var wallet = _repository.GetWalletById(transaction.WalletId);
+            var wallet = await _repository.GetWalletByIdAsync(transaction.WalletId);
 
             return new TransactionDetailDto
             {
                 Id = transaction.Id,
+                WalletId = transaction.WalletId,
                 Amount = transaction.Amount,
                 Category = transaction.Category,
                 Description = transaction.Description,
@@ -74,5 +78,29 @@ namespace ExpenseManager.Services
                 Currency = wallet?.Currency ?? Currency.UAH
             };
         }
+
+        public async Task<int> CreateWalletAsync(string name, Currency currency)
+        {
+            var wallet = await _repository.AddWalletAsync(name, currency);
+            return wallet.Id;
+        }
+
+        public Task UpdateWalletAsync(int walletId, string name, Currency currency) =>
+            _repository.UpdateWalletAsync(walletId, name, currency);
+
+        public Task DeleteWalletAsync(int walletId) =>
+            _repository.DeleteWalletAsync(walletId);
+
+        public async Task<int> CreateTransactionAsync(int walletId, decimal amount, TransactionCategory category, string description, DateTime date)
+        {
+            var transaction = await _repository.AddTransactionAsync(walletId, amount, category, description, date);
+            return transaction.Id;
+        }
+
+        public Task UpdateTransactionAsync(int transactionId, decimal amount, TransactionCategory category, string description, DateTime date) =>
+            _repository.UpdateTransactionAsync(transactionId, amount, category, description, date);
+
+        public Task DeleteTransactionAsync(int transactionId) =>
+            _repository.DeleteTransactionAsync(transactionId);
     }
 }
