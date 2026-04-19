@@ -1,56 +1,144 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:dto="clr-namespace:ExpenseManager.Services.Dto;assembly=ExpenseManager.Services"
+             xmlns:vm="clr-namespace:ExpenseManager.Maui.ViewModels"
              x:Class="ExpenseManager.Maui.WalletDetailsPage"
+             x:DataType="vm:WalletDetailsViewModel"
              Title="Деталі гаманця"
              BackgroundColor="{StaticResource Gray100}">
 
-    <ScrollView>
-        <StackLayout Spacing="0">
-            <!-- Wallet info card -->
-            <Border BackgroundColor="{StaticResource Primary}"
+    <ContentPage.Resources>
+        <Style x:Key="InputBorder" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="White" />
+            <Setter Property="Stroke" Value="{StaticResource Gray200}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+            <Setter Property="Padding" Value="8,0" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid IsEnabled="{Binding IsNotBusy}"
+              RowDefinitions="Auto,Auto,Auto,*">
+
+            <Border Grid.Row="0"
+                    BackgroundColor="{StaticResource Primary}"
                     StrokeShape="RoundRectangle 0"
                     Padding="24,28"
                     Stroke="Transparent">
                 <Border.Shadow>
                     <Shadow Brush="Black" Offset="0,2" Radius="4" Opacity="0.15" />
                 </Border.Shadow>
-                <StackLayout Spacing="6">
-                    <Label Text="{Binding Name}"
-                           FontSize="26"
-                           FontAttributes="Bold"
-                           TextColor="White" />
-                    <Label Text="{Binding CurrencyText}"
-                           FontSize="15"
-                           TextColor="{StaticResource Secondary}" />
-                    <BoxView HeightRequest="1"
-                             Color="{StaticResource PrimaryDark}"
-                             Opacity="0.3"
-                             Margin="0,8" />
-                    <Label Text="Баланс"
-                           FontSize="13"
-                           TextColor="{StaticResource Secondary}" />
-                    <Label Text="{Binding BalanceText}"
-                           FontSize="32"
-                           FontAttributes="Bold"
-                           TextColor="White" />
-                </StackLayout>
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+                    <Border Grid.Column="0"
+                            BackgroundColor="White"
+                            StrokeShape="RoundRectangle 24"
+                            WidthRequest="48"
+                            HeightRequest="48"
+                            Padding="0"
+                            Stroke="Transparent"
+                            VerticalOptions="Start">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BackCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="←"
+                               FontSize="28"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Border>
+                    <StackLayout Grid.Column="1" Spacing="6" Margin="8,0,0,0">
+                        <Label Text="{Binding Name}"
+                               FontSize="26"
+                               FontAttributes="Bold"
+                               TextColor="White" />
+                        <Label Text="{Binding CurrencyText}"
+                               FontSize="15"
+                               TextColor="{StaticResource Secondary}" />
+                        <BoxView HeightRequest="1"
+                                 Color="{StaticResource PrimaryDark}"
+                                 Opacity="0.3"
+                                 Margin="0,8" />
+                        <Label Text="Баланс"
+                               FontSize="13"
+                               TextColor="{StaticResource Secondary}" />
+                        <Label Text="{Binding BalanceText}"
+                               FontSize="30"
+                               FontAttributes="Bold"
+                               TextColor="White" />
+                    </StackLayout>
+                    <Button Grid.Column="2"
+                            Text="Редагувати"
+                            Command="{Binding EditWalletCommand}"
+                            BackgroundColor="White"
+                            TextColor="{StaticResource Primary}"
+                            FontAttributes="Bold"
+                            CornerRadius="8"
+                            Padding="12,6"
+                            VerticalOptions="Start" />
+                    <Button Grid.Column="3"
+                            Text="Видалити"
+                            Command="{Binding DeleteWalletCommand}"
+                            BackgroundColor="#E53935"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            CornerRadius="8"
+                            Padding="12,6"
+                            VerticalOptions="Start" />
+                </Grid>
             </Border>
 
-            <!-- Transactions header -->
-            <Label Text="Транзакції"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   TextColor="{StaticResource Gray900}"
-                   Margin="16,20,16,8" />
+            <Grid Grid.Row="1"
+                  Padding="16,16,16,4"
+                  ColumnDefinitions="*,Auto"
+                  ColumnSpacing="8">
+                <Label Grid.Column="0"
+                       Text="Транзакції"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Gray900}"
+                       VerticalOptions="Center" />
+                <Button Grid.Column="1"
+                        Text="+ Додати"
+                        Command="{Binding AddTransactionCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        Padding="12,6" />
+            </Grid>
 
-            <!-- Transactions list -->
-            <CollectionView ItemsSource="{Binding Transactions}"
+            <Grid Grid.Row="2"
+                  Padding="16,0,16,8"
+                  ColumnDefinitions="*,Auto"
+                  ColumnSpacing="8">
+                <Border Grid.Column="0" Style="{StaticResource InputBorder}">
+                    <SearchBar Placeholder="Пошук транзакцій..."
+                               Text="{Binding SearchText}"
+                               BackgroundColor="Transparent"
+                               TextColor="{StaticResource Gray900}"
+                               PlaceholderColor="{StaticResource Gray400}" />
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource InputBorder}">
+                    <Picker WidthRequest="140"
+                            Title="Сортування"
+                            ItemsSource="{Binding SortOptions}"
+                            SelectedItem="{Binding SelectedSort}"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource Gray900}"
+                            TitleColor="{StaticResource Gray600}" />
+                </Border>
+            </Grid>
+
+            <CollectionView Grid.Row="3"
+                            ItemsSource="{Binding Transactions}"
                             SelectedItem="{Binding SelectedTransaction}"
                             SelectionMode="Single"
-                            Margin="12,0">
+                            Margin="12,0,12,12">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="dto:TransactionListDto">
                         <Border BackgroundColor="White"
                                 StrokeShape="RoundRectangle 10"
                                 Padding="14"
@@ -59,8 +147,7 @@
                             <Border.Shadow>
                                 <Shadow Brush="Black" Offset="0,2" Radius="4" Opacity="0.15" />
                             </Border.Shadow>
-                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
-                                <!-- Category badge -->
+                            <Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto,Auto">
                                 <Border Grid.RowSpan="2"
                                         BackgroundColor="{StaticResource Secondary}"
                                         StrokeShape="RoundRectangle 20"
@@ -79,7 +166,6 @@
                                            MaxLines="1" />
                                 </Border>
 
-                                <!-- Description -->
                                 <Label Grid.Column="1"
                                        Text="{Binding Description}"
                                        FontSize="16"
@@ -89,7 +175,6 @@
                                        VerticalOptions="End"
                                        LineBreakMode="TailTruncation" />
 
-                                <!-- Date -->
                                 <Label Grid.Column="1"
                                        Grid.Row="1"
                                        Text="{Binding Date, StringFormat='{0:dd.MM.yyyy}'}"
@@ -98,14 +183,29 @@
                                        Margin="10,2,0,0"
                                        VerticalOptions="Start" />
 
-                                <!-- Amount -->
                                 <Label Grid.Column="2"
                                        Grid.RowSpan="2"
                                        Text="{Binding Amount, StringFormat='{0:+#.00;-#.00;0.00}'}"
                                        FontSize="17"
                                        FontAttributes="Bold"
                                        VerticalOptions="Center"
-                                       HorizontalOptions="End" />
+                                       HorizontalOptions="End"
+                                       Margin="0,0,8,0" />
+
+                                <Button Grid.Column="3"
+                                        Grid.RowSpan="2"
+                                        Text="×"
+                                        FontSize="18"
+                                        FontAttributes="Bold"
+                                        WidthRequest="36"
+                                        HeightRequest="36"
+                                        Padding="0"
+                                        CornerRadius="18"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{StaticResource Gray400}"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:WalletDetailsViewModel}}, Path=DeleteTransactionCommand}"
+                                        CommandParameter="{Binding .}" />
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -119,7 +219,16 @@
                     </StackLayout>
                 </CollectionView.EmptyView>
             </CollectionView>
-        </StackLayout>
-    </ScrollView>
+        </Grid>
 
+        <Grid IsVisible="{Binding IsBusy}"
+              BackgroundColor="#80000000">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               Color="White"
+                               WidthRequest="50"
+                               HeightRequest="50"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center" />
+        </Grid>
+    </Grid>
 </ContentPage>

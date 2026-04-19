@@ -1,11 +1,17 @@
+using System.Windows.Input;
+using ExpenseManager.Maui.Commands;
+using ExpenseManager.Maui.Services;
 using ExpenseManager.Services;
-using ExpenseManager.Services.Dto;
 
 namespace ExpenseManager.Maui.ViewModels
 {
     public class TransactionDetailsViewModel : BaseViewModel
     {
         private readonly IExpenseService _expenseService;
+        private readonly INavigationService _navigationService;
+
+        private int _transactionId;
+        private int _walletId;
 
         private string _amountText = string.Empty;
         public string AmountText
@@ -56,15 +62,32 @@ namespace ExpenseManager.Maui.ViewModels
             set => SetProperty(ref _typeLabelColor, value);
         }
 
-        public TransactionDetailsViewModel(IExpenseService expenseService)
+        public ICommand BackCommand { get; }
+        public ICommand EditCommand { get; }
+        public ICommand DeleteCommand { get; }
+
+        public TransactionDetailsViewModel(IExpenseService expenseService, INavigationService navigationService)
         {
             _expenseService = expenseService;
+            _navigationService = navigationService;
+
+            BackCommand = new AsyncRelayCommand(() => _navigationService.GoBackAsync());
+            EditCommand = new AsyncRelayCommand(OnEditAsync);
+            DeleteCommand = new AsyncRelayCommand(OnDeleteAsync);
         }
 
-        public void Load(int transactionId)
+        public void Initialize(int transactionId) => _transactionId = transactionId;
+
+        public Task LoadAsync() => RunBusyAsync(async () =>
         {
-            var transaction = _expenseService.GetTransactionById(transactionId);
-            if (transaction == null) return;
+            var transaction = await _expenseService.GetTransactionByIdAsync(_transactionId);
+            if (transaction == null)
+            {
+                await _navigationService.GoBackAsync();
+                return;
+            }
+
+            _walletId = transaction.WalletId;
 
             string sign = transaction.IsExpense ? "-" : "+";
             decimal absAmount = Math.Abs(transaction.Amount);
@@ -85,6 +108,27 @@ namespace ExpenseManager.Maui.ViewModels
                 HeaderColor = Color.FromArgb("#43A047");
                 TypeLabelColor = Color.FromArgb("#C8E6C9");
             }
+        });
+
+        private Task OnEditAsync() =>
+            _navigationService.NavigateToTransactionEditAsync(_walletId, _transactionId);
+
+        private async Task OnDeleteAsync()
+        {
+            var page = Application.Current?.Windows[0].Page;
+            if (page == null) return;
+
+            bool confirm = await page.DisplayAlertAsync(
+                "Видалити транзакцію?",
+                "Транзакцію буде видалено.",
+                "Видалити", "Скасувати");
+            if (!confirm) return;
+
+            await RunBusyAsync(async () =>
+            {
+                await _expenseService.DeleteTransactionAsync(_transactionId);
+                await _navigationService.GoBackAsync();
+            });
         }
     }
 }
