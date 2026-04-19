@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ExpenseManager.Maui.ViewModels"
+             x:Class="ExpenseManager.Maui.WalletEditPage"
+             x:DataType="vm:WalletEditViewModel"
+             Title="{Binding Title}"
+             BackgroundColor="{StaticResource Gray100}">
+
+    <ContentPage.Resources>
+        <Style x:Key="FieldBorder" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource Gray100}" />
+            <Setter Property="Stroke" Value="{StaticResource Gray200}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+        <ScrollView IsEnabled="{Binding IsNotBusy}">
+            <StackLayout Padding="16,20" Spacing="16">
+
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Border Grid.Column="0"
+                            BackgroundColor="White"
+                            StrokeShape="RoundRectangle 24"
+                            Stroke="{StaticResource Gray200}"
+                            StrokeThickness="1"
+                            WidthRequest="48"
+                            HeightRequest="48"
+                            Padding="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CancelCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="←"
+                               FontSize="28"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center" />
+                    </Border>
+                    <Label Grid.Column="1"
+                           Text="{Binding Title}"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Gray900}"
+                           VerticalOptions="Center" />
+                </Grid>
+
+                <Border BackgroundColor="White"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="20"
+                        Stroke="Transparent">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,2" Radius="4" Opacity="0.15" />
+                    </Border.Shadow>
+
+                    <StackLayout Spacing="18">
+                        <StackLayout Spacing="6">
+                            <Label Text="Назва гаманця"
+                                   FontSize="13"
+                                   TextColor="{StaticResource Gray500}" />
+                            <Border Style="{StaticResource FieldBorder}">
+                                <Entry Text="{Binding Name}"
+                                       Placeholder="Наприклад, Готівка"
+                                       FontSize="17"
+                                       TextColor="{StaticResource Gray900}" />
+                            </Border>
+                        </StackLayout>
+
+                        <StackLayout Spacing="6">
+                            <Label Text="Валюта"
+                                   FontSize="13"
+                                   TextColor="{StaticResource Gray500}" />
+                            <Border Style="{StaticResource FieldBorder}">
+                                <Picker ItemsSource="{Binding Currencies}"
+                                        SelectedItem="{Binding SelectedCurrency}"
+                                        FontSize="17"
+                                        TextColor="{StaticResource Gray900}"
+                                        TitleColor="{StaticResource Gray600}" />
+                            </Border>
+                        </StackLayout>
+                    </StackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Button Grid.Column="0"
+                            Text="Скасувати"
+                            Command="{Binding CancelCommand}"
+                            BackgroundColor="{StaticResource Gray200}"
+                            TextColor="{StaticResource Gray900}"
+                            CornerRadius="8" />
+                    <Button Grid.Column="1"
+                            Text="Зберегти"
+                            Command="{Binding SaveCommand}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            CornerRadius="8" />
+                </Grid>
+            </StackLayout>
+        </ScrollView>
+
+        <Grid IsVisible="{Binding IsBusy}"
+              BackgroundColor="#80000000">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               Color="White"
+                               WidthRequest="50"
+                               HeightRequest="50"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center" />
+        </Grid>
+    </Grid>
+</ContentPage>
